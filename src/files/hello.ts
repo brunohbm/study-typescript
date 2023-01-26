@@ -158,3 +158,38 @@ function multiplyAll(
 }
 
 multiplyAll([10], 1);
+
+type Fish = { swim: () => void };
+type Bird = { fly: () => void };
+
+// Using type predicates
+function isFish(pet: Fish | Bird): pet is Fish {
+    return (pet as Fish).swim !== undefined;
+}
+
+const underWater1: Bird[] | Fish[] = [{ fly: () => {} }, { swim: () => {} }].filter(isFish);
+console.log(underWater1);
+
+function isBird(pet: Fish | Bird): pet is Bird {
+    return (pet as Bird).fly !== undefined;
+}
+
+const inTheSky: Bird[] | Fish[] = [{ fly: () => {} }, { swim: () => {} }].filter(isBird);
+console.log(inTheSky);
+
+
+// Call Signatures
+// This is how your should describe a function with type
+type DescribableFunction = {
+    (someText: string): string;
+};
+
+const testFunction: DescribableFunction = someText => {
+    return someText + 'teste';
+};
+
+function foSomething(fn: DescribableFunction): string {
+    return fn('10') + '20';
+}
+
+foSomething(testFunction);
