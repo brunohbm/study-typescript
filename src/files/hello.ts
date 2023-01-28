@@ -167,14 +167,14 @@ function isFish(pet: Fish | Bird): pet is Fish {
     return (pet as Fish).swim !== undefined;
 }
 
-const underWater1: Bird[] | Fish[] = [{ fly: () => {} }, { swim: () => {} }].filter(isFish);
+const underWater1: Bird[] | Fish[] = [{ fly: () => { } }, { swim: () => { } }].filter(isFish);
 console.log(underWater1);
 
 function isBird(pet: Fish | Bird): pet is Bird {
     return (pet as Bird).fly !== undefined;
 }
 
-const inTheSky: Bird[] | Fish[] = [{ fly: () => {} }, { swim: () => {} }].filter(isBird);
+const inTheSky: Bird[] | Fish[] = [{ fly: () => { } }, { swim: () => { } }].filter(isBird);
 console.log(inTheSky);
 
 
@@ -193,3 +193,19 @@ function foSomething(fn: DescribableFunction): string {
 }
 
 foSomething(testFunction);
+
+// Generic Functions
+
+function firstElement<Type>(arr: Type[]): Type | undefined {
+    return arr[0];
+}
+
+const n = firstElement([1, 2, 3]);
+
+function longest<Type extends { length: number }>(arr: Type, arr1: Type): Type | undefined {
+    if(arr.length < arr1.length) return arr1;
+    return arr;
+}
+
+longest("00", "0");
+longest(["00"], ["0"]);
