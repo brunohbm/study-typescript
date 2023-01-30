@@ -203,9 +203,59 @@ function firstElement<Type>(arr: Type[]): Type | undefined {
 const n = firstElement([1, 2, 3]);
 
 function longest<Type extends { length: number }>(arr: Type, arr1: Type): Type | undefined {
-    if(arr.length < arr1.length) return arr1;
+    if (arr.length < arr1.length) return arr1;
     return arr;
 }
 
 longest("00", "0");
 longest(["00"], ["0"]);
+
+function myForEach(arr: any[], callback: (arg: any, index?: number) => void) {
+    for (let i = 0; i < arr.length; i++) {
+        // I don't feel like providing the index today
+        callback(arr[i]);
+    }
+}
+
+myForEach([10, 10, 10, 10], (arg) => {
+    console.log(arg);
+});
+
+function makeDate(timestamp: number): Date;
+function makeDate(m: number, d: number, y: number): Date;
+function makeDate(mOrTimestamp: number, d?: number, y?: number): Date {
+    if (d !== undefined && y !== undefined) {
+        return new Date(y, mOrTimestamp, d);
+    } else {
+        return new Date(mOrTimestamp);
+    }
+}
+
+makeDate(10001446);
+makeDate(10001446, 10001446, 10001446);
+
+interface User {
+    id: number;
+    admin: boolean;
+}
+
+declare const getDB: () => DB;
+interface DB {
+    filterUsers(filter: (this: User) => boolean): string;
+}
+
+type Teste = {
+    tyeste: string;
+};
+
+declare const getTeste: () => Teste;
+
+const testeasd = getTeste();
+
+testeasd.tyeste;
+
+const db = getDB();
+const admins = db.filterUsers(function (this: User) {
+    return this.admin;
+});
+
