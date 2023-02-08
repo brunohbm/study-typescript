@@ -252,10 +252,247 @@ declare const getTeste: () => Teste;
 
 const testeasd = getTeste();
 
-testeasd.tyeste;
-
 const db = getDB();
 const admins = db.filterUsers(function (this: User) {
     return this.admin;
 });
+
+function unknownValue(value: unknown): any {
+    return value;
+}
+
+function anyValue(value: any): any {
+    if (value) return value.map((va: any) => va);
+    return value + 10;
+}
+
+// Return any
+function doSomething0(f: Function) {
+    return f(1, 2, 3);
+}
+
+// Return number
+function doSomething(f: (a: number, b: number, c: number) => number) {
+    return f(1, 2, 3);
+}
+
+// Rest Parameters
+function multiply(n: number, ...m: number[]) {
+    return m.map(num => num * n);
+}
+
+multiply(10, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+// ------------------------------------------
+
+function sum0(n: number, m: number) {
+    return m + n;
+}
+
+// If defined only as 'const args = [8,5]' it will return an error, because arrays are mutable. 
+const args = [8, 5] as const;
+
+sum0(...args);
+
+// ------------------------------------------
+
+// Contextual function type
+type voidFunc = () => void;
+
+const f1: voidFunc = () => {
+    return true;
+}
+
+f1();
+
+function f2(): void {
+    // return true;
+}
+
+console.log('f1()', f1());
+
+// ------------------------------------------
+
+interface OptionalObj {
+    name: string;
+    age?: number;
+    weight?: number;
+};
+
+function consoleObj({
+    name,
+    age = 0,
+}: OptionalObj) {
+    console.log(age);
+}
+
+consoleObj({ name: 'Bruno Henrique', age: 10 });
+
+// ------------------------------------------
+
+interface ReadOnlyObj {
+    readonly name: string;
+}
+
+const readonlyObj: ReadOnlyObj = {
+    name: 'Bruno'
+};
+
+// Cannot assign to 'name' because it is a read-only property.
+// readonlyObj.name = '';
+
+// ------------------------------------------
+
+interface ReadOnlyObj2 {
+    readonly colors: {
+        primary: string;
+    }
+}
+
+const colors: ReadOnlyObj2 = {
+    colors: {
+        primary: '#fff'
+    },
+};
+
+// Cannot assign to 'colors' because it is a read-only property.
+// colors.colors = {};
+colors.colors.primary = ''
+
+// ------------------------------------------
+
+interface Person {
+    name: string;
+    age: number;
+};
+
+interface ReadOnlyPerson {
+    readonly name: string;
+    readonly age: number;
+}
+
+const person: Person = { name: 'bruno', age: 10 };
+
+const readonlyPerson: ReadOnlyPerson = person;
+
+
+console.log(person.age); // 10
+console.log(readonlyPerson.age); // 10
+
+person.age++;
+
+console.log(readonlyPerson.age) //11
+
+// --------------Index Signatures--------------
+
+interface StringArray {
+    [index: number]: string;
+}
+
+const stringArray: StringArray = ['10', '20'];
+const objArray: StringArray = { 10: '10' };
+
+
+// ---------------------------------------------
+
+interface ReadonlyStringArray {
+    readonly [index: number]: string;
+}
+
+const myArray: ReadonlyStringArray = ['10', '20', '30'];
+
+// ------------------ Extending Types---------------------------
+
+interface NewAdress {
+    street: string;
+    number: number;
+}
+
+interface NewFullAdress extends NewAdress {
+    city: string;
+}
+
+const testeAdressInterface : NewFullAdress = {
+    number: 10,
+    street: 'teste',
+    city: 'acapuco',
+};
+
+interface Colorful {
+    color: string;
+}
+
+interface Circle {
+    radious: number;
+}
+
+interface ColorfulCircle extends Colorful, Circle {
+    type: string;
+}
+
+const colorfulCircle : ColorfulCircle = {
+    color: 'red',
+    radious: 158,
+    type: 'beautiful'
+};
+
+
+// ------------------ Intersection Types & -------------------
+
+type BasicAdress = {
+    street: string;
+    number: number;
+};
+
+type FullAdress = BasicAdress & {
+    number: string;
+}
+
+const testeAdress : FullAdress = {
+    number: 0 as never,
+    street: 'teste',
+};
+
+
+
+// ------------------ Generic object types -------------------
+
+interface Box<Type> {
+    contents: Type;
+}
+
+type OneOrNull<Type> = Type | null;
+
+type OneOrMany<Type> = Type | Type[];
+
+type OneOrManyOrNull<Type> = OneOrNull<OneOrMany<Type>>;
+
+const testeGenericTypes: OneOrManyOrNull<string> = ['text'];
+
+console.log(testeGenericTypes);
+
+type ArrayString = Array<string>;
+
+
+// ------------------ ReadonlyArray -------------------
+
+let readOnlyArray: ReadonlyArray<string> = [];
+
+readOnlyArray = ['', '101'];
+
+
+// ------------------ Tuple Types -------------------
+
+type TupleExemple = [string, number, string];
+
+const testTuple: TupleExemple = ['10', 10, '10'];
+
+console.log(testTuple.length); // Always 3
+
+testTuple[0] = '100';
+
+type RestElementsTuple = [string, number, ...string[]];
+
+const restTuple: RestElementsTuple = ['10', 10, '5', '', '', '='];
+
 
