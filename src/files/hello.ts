@@ -11,11 +11,11 @@ greet('Date', new Date());
 console.log('teste :>> ', teste);
 console.log('teste1 :>> ', teste1);
 
-function consolo(aSerConsolado: string) {
+function consoleLog(aSerConsolado: string) {
     console.log(aSerConsolado);
 }
 
-consolo('Bruno');
+consoleLog('Bruno');
 
 function sum(num1: number, num2: number) {
     if (num2) {
@@ -115,9 +115,9 @@ const firstName = Symbol("name");
 const secondName = Symbol("name");
 
 if (firstName.description === secondName.description) {
-    consolo('teste');
+    consoleLog('teste');
 } else {
-    consolo('teste');
+    consoleLog('teste');
 }
 
 Symbol.for('name');
@@ -412,7 +412,7 @@ interface NewFullAdress extends NewAdress {
     city: string;
 }
 
-const testeAdressInterface : NewFullAdress = {
+const testeAdressInterface: NewFullAdress = {
     number: 10,
     street: 'teste',
     city: 'acapuco',
@@ -430,7 +430,7 @@ interface ColorfulCircle extends Colorful, Circle {
     type: string;
 }
 
-const colorfulCircle : ColorfulCircle = {
+const colorfulCircle: ColorfulCircle = {
     color: 'red',
     radious: 158,
     type: 'beautiful'
@@ -448,7 +448,7 @@ type FullAdress = BasicAdress & {
     number: string;
 }
 
-const testeAdress : FullAdress = {
+const testeAdress: FullAdress = {
     number: 0 as never,
     street: 'teste',
 };
@@ -496,3 +496,157 @@ type RestElementsTuple = [string, number, ...string[]];
 const restTuple: RestElementsTuple = ['10', 10, '5', '', '', '='];
 
 
+// ------------------ Identity -------------------
+
+function identity<Type>(arg: Type): Type {
+    return arg;
+}
+
+identity<string>('10');
+identity('10');
+identity(10);
+
+
+interface GenericFn0 {
+    <Type>(args: Type): Type;
+}
+
+const newIdentity0: GenericFn0 = identity;
+
+console.log(newIdentity0('10').toUpperCase());
+
+interface GenericFn1<Type> {
+    (args: Type): Type
+};
+
+const newIdentity1: GenericFn1<string> = identity;
+
+newIdentity1('10');
+
+
+// ------------------ Generic Classes -------------------
+
+class GenericClass<Type> {
+    num: number;
+    children: Type;
+}
+
+let myGenericClass = new GenericClass<string>();
+myGenericClass.children = '10';
+myGenericClass.num = 10;
+
+
+// ------------------ Generic Constraints -------------------
+
+interface iLengthwise {
+    length: number;
+}
+
+function constrainedFunc<Type extends iLengthwise>(param: Type) {
+    console.log(param.length);
+}
+
+constrainedFunc('54');
+
+type tLengthwise = {
+    length: number;
+};
+
+function constrainedFunc1<Type extends tLengthwise>(param: Type) {
+    console.log(param);
+}
+
+constrainedFunc1({ length: 10 });
+
+
+// ------------------ Using Type Parameters in Generic Constraints -------------------
+
+function tpInGeneric<Type, Key extends keyof Type>(obj: Type, key: Key) {
+    console.log(obj[key]);
+}
+
+tpInGeneric({ age: 10, name: "Bruno" }, 'age');
+
+function tpInGeneric1<Type, SubType extends Type>(type: Type, subtype: SubType) {
+    console.log(type, subtype);
+}
+
+tpInGeneric1({ name: 10 }, { age: 10, name: 10 })
+
+
+// ------------------ Using Class Types in Generics -------------------
+
+class BeeKeeper {
+    hasMask: boolean = true;
+}
+
+class ZooKeeper {
+    nametag: string = "Mikle";
+}
+
+class Animal {
+    numLegs: number = 4;
+}
+
+class Bee extends Animal {
+    keeper: BeeKeeper = new BeeKeeper();
+}
+
+class Lion extends Animal {
+    keeper: ZooKeeper = new ZooKeeper();
+}
+
+class Ant extends Animal { }
+
+
+function createInstance<A extends Animal>(c: new () => A): A {
+    return new c();
+}
+
+console.log(createInstance(Lion).keeper.nametag);
+console.log(createInstance(Bee).keeper.hasMask);
+console.log(createInstance(Animal).numLegs);
+console.log(createInstance(Ant).numLegs);
+
+
+// ------------------ Keyof -------------------
+
+type TestKeyof = {
+    [k: string]: boolean;
+};
+
+const testKeyof: TestKeyof = { 0: false };
+
+type Key = keyof TestKeyof;
+
+const key: Key = '{}';
+
+// ------------------ ReturnType -------------------
+
+type FunctionRT = () => string;
+
+type stringRT = ReturnType<FunctionRT>;
+
+function funcRT() {
+    return { teste: 1 };
+}
+
+type stringRT0 = ReturnType<typeof funcRT>;
+
+
+// ------------------ Indexed Access Types -------------------
+
+type BigPerson = {
+    height: string;
+    size: number;
+};
+
+type HeightType = BigPerson['height' | 'size'];
+
+type HeightType0 = BigPerson[keyof BigPerson];
+
+const IATArray = [
+    { key: 'key', label: 100 }
+];
+
+type HeightType1 = typeof IATArray[0]['label'];
